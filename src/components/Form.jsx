@@ -7,7 +7,7 @@ function Form(props) {
         setName(event.target.value);
     };
 
-    function  handleSubmit(event){
+    function  handleSubmit(event){ 
         event.preventDefault();
         props.addTask(name);
         setName("");
