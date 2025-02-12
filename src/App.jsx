@@ -4,9 +4,18 @@ import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import { nanoid } from "nanoid";
 
+const FILTER_MAP = {
+  All : () => true,
+  Active : (task) => !task.completed,
+  Completed : (task) => task.completed,
+};
+
+const FILTER_NAMES = Object.keys(FILTER_MAP);
+
 function App(props) {
   const [tasks, setTasks] = useState(props.tasks);
-
+  const [filter, setFilter] = useState("All");
+  
   function toggleTaskCompleted(id){
     const updatedTasks = tasks.map(task => {
       if(id === task.id){
@@ -16,7 +25,7 @@ function App(props) {
       return task;
     });
     setTasks(updatedTasks);
-  }
+  };
 
   function deleteTask(id){
     const remainingTask = tasks.filter((task) => id !== task.id);
@@ -24,7 +33,7 @@ function App(props) {
   }
 
   function addTask(name){
-    const newTask = {id: `todo-0${nanoid()}`, name, completed: false};
+    const newTask = {id: `todo-${nanoid()}`, name, completed: false};
     setTasks([...tasks, newTask]);
     
   };
@@ -38,11 +47,11 @@ function App(props) {
     });
     setTasks(editedTaskList);
     
-  }
+  };
   
 
-  const taskList = tasks?.map((task) => {
-     return (<Todo 
+  const taskList = tasks.filter(FILTER_MAP[filter]).map(task => {
+      return (<Todo 
       id={task.id} 
       name={task.name} 
       completed={task.completed} 
@@ -50,10 +59,18 @@ function App(props) {
       toggleTaskCompleted={toggleTaskCompleted }
       deleteTask={deleteTask}
       editTask={editTask}
-      />);
-  });
+      />)});
 
-  const taskNoun = taskList.length <= 1 ? "task" : "tasks"
+  const filterList = FILTER_NAMES.map((name) => (
+    <FilterButton 
+    key={name} 
+    name={name} 
+    isPressed={name === filter} 
+    setFilter={setFilter}
+    />
+  ));
+
+  const taskNoun = taskList.length <= 1 ? "task" : "tasks";
 
   const headingText = `${taskList.length} ${taskNoun} remaining`;
   return (
@@ -64,9 +81,7 @@ function App(props) {
         <Form addTask={addTask}/>
 
         <div className="filters btn-group stack-exception">
-          <FilterButton />
-          <FilterButton />
-          <FilterButton />
+          {filterList}
         </div>
         <h2 id="list-heading">{headingText}</h2>
 

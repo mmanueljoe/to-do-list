@@ -1,9 +1,13 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 const Todo = (props) => {
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState("");
+
+  const editFieldRef = useRef(null);
+  const editButtonRef = useRef(null);
+
   function handleChange(e){
     setNewName(e.target.value);
   };
@@ -14,8 +18,9 @@ const Todo = (props) => {
     setNewName("");
     setEditing(false);
   }
+
   const editingTemplate = (
-    <form action="" className='stack-small'>
+    <form action="" className='stack-small' onSubmit={handleSubmit}>
       <div className='form-group'>
         <label className="todo-label" htmlFor={props.id}>
           New name for {props.name}
@@ -25,6 +30,7 @@ const Todo = (props) => {
           className='todo-text'
           value={newName}
           onChange={handleChange}
+          ref={editFieldRef}
         />
       </div>
       <div className='btn-group'>
@@ -50,7 +56,7 @@ const Todo = (props) => {
               <label htmlFor={props.id} className='todo-label'>{props.name}</label>
           </div>
           <div className='btn-group'>
-            <button type='button' className='btn' onClick={() => setEditing(true)}>
+            <button type='button' className='btn' onClick={() => setEditing(true)} ref={editButtonRef}>
                   Edit <span className='visually-hidden'>{props.name}</span>
             </button>
             <button type='button' className='btn btn__danger' onClick={() => props.deleteTask(props.id)}>
@@ -63,23 +69,6 @@ const Todo = (props) => {
   return (
     <>
         <li className='todo stack-small'>
-          {/* <div className='c-cb'>
-              <input type="checkbox" 
-              id={props.id} 
-              defaultChecked={props.completed}
-              onChange={() => props.toggleTaskCompleted(props.id)}
-              />
-              <label htmlFor={props.id} className='todo-label'>{props.name}</label>
-          </div>
-          <div className='btn-group'>
-            <button type='button' className='btn' onClick={() => props.editTask(props.id, name)}>
-                  Edit <span className='visually-hidden'>{props.name}</span>
-            </button>
-            <button type='button' className='btn btn__danger' onClick={() => props.deleteTask(props.id)}>
-                  Delete <span className='visually-hidden'>{props.name}</span>
-            </button>
-          </div> */}
-
           {isEditing ? editingTemplate : viewTemplate}
         </li>
     </>

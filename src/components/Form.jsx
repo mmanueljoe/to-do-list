@@ -3,11 +3,11 @@ import { useState } from "react";
 function Form(props) {
     const [name, setName] = useState("");
 
-    function handleChange(){
+    function handleChange(event){
         setName(event.target.value);
     };
 
-    function  handleSubmit(event){ 
+    function handleSubmit(event){ 
         event.preventDefault();
         props.addTask(name);
         setName("");
